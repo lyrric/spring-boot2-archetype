@@ -1,7 +1,3 @@
-/**
- * BBD Service Inc
- * All Rights Reserved @2017
- */
 package ${groupId}.entity;
 
 import lombok.Data;
