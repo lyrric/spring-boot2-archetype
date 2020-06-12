@@ -77,7 +77,7 @@
 			<artifactId>mapper-spring-boot-starter</artifactId>
 			<version>2.0.2</version>
 		</dependency>
-		<dependency>
+		<dependency>:
 			<groupId>com.github.pagehelper</groupId>
 			<artifactId>pagehelper-spring-boot-starter</artifactId>
 			<version>1.2.9</version>
