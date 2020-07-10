@@ -1,14 +1,13 @@
 #!/bin/bash
-USER_NAME=`whoami`
+USER_NAME=$(whoami)
 if [ "$USER_NAME" = "root" ];then
     echo "----->Root user can not start app.<-----"
     exit 1
 fi
 
-cd `dirname $0`
-BIN_DIR=`pwd`
+cd "dirname $0" || exit
 cd ..
-DEPLOY_DIR=`pwd`
+DEPLOY_DIR=$(pwd)
 
 LIB_DIR=$DEPLOY_DIR/lib
 LIB_JARS=`ls $LIB_DIR|grep .jar|awk '{print "'$LIB_DIR'/"$0}'|tr "\n" ":"`
@@ -23,7 +22,7 @@ else
 fi
 
 TOMCAT_DIR=$DEPLOY_DIR/temp
-rm -rf $TOMCAT_DIR/*
+rm -rf "${TOMCAT_DIR:?}"/*
 echo -e "Starting the server ..."
 nohup java $JAVA_OPTS $JAVA_MEM_OPTS -classpath $LIB_JARS ${groupId}.Application --server.tomcat.basedir=$TOMCAT_DIR >/dev/null 2>&1 &
 echo -e "Check the logs for more details."
