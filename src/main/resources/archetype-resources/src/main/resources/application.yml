@@ -7,5 +7,5 @@ mybatis:
 
 logging:
   file:
-    name: /data/app/logs/${artifactId}.log
+    name: /data/app/logs/${artifactId}/${artifactId}.log
     max-size: 10MB
