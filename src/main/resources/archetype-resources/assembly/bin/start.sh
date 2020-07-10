@@ -5,7 +5,7 @@ if [ "$USER_NAME" = "root" ];then
     exit 1
 fi
 
-cd "dirname $0" || exit
+cd `dirname $0` || exit
 cd ..
 DEPLOY_DIR=$(pwd)
 
@@ -20,12 +20,16 @@ if [ -n "$BITS" ]; then
 else
     JAVA_MEM_OPTS=" -server -Xms1g -Xmx1g -XX:PermSize=128m -XX:SurvivorRatio=2 -XX:+UseParallelGC "
 fi
+JAVA_GC_OPTS="-XX:+PrintGCDetails -XX:+PrintGCDateStamps -Xloggc:/data/app/logs/${artifactId}/gc.log"
 
 TOMCAT_DIR=$DEPLOY_DIR/temp
-rm -rf "${TOMCAT_DIR:?}"/*
+if [ -z "$TOMCAT_DIR" ]; then
+    echo 'error TOMCAT_DIR is empty'
+    exit
+fi
+rm -rf $TOMCAT_DIR/*
 echo -e "Starting the server ..."
-nohup java $JAVA_OPTS $JAVA_MEM_OPTS -classpath $LIB_JARS ${groupId}.Application --server.tomcat.basedir=$TOMCAT_DIR >/dev/null 2>&1 &
+nohup java $JAVA_OPTS $JAVA_MEM_OPTS $JAVA_GC_OPTS -classpath $LIB_JARS ${groupId}.Application --server.tomcat.basedir=$TOMCAT_DIR >/dev/null 2>&1 &
 echo -e "Check the logs for more details."
-
 PID=`ps -ef | grep 'java' | grep '${groupId}.Application' | grep -v 'grep' | awk '{print $2}'`
 echo -e "The PID Is $PID"
