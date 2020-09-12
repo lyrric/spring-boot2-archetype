@@ -77,6 +77,18 @@
 	</dependencies>
 
 
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>Greenwich.RELEASE</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
 	<build>
 		<finalName>${artifactId}</finalName>
 		<resources>
@@ -94,6 +106,7 @@
 			<plugin>
 				<groupId>org.mybatis.generator</groupId>
 				<artifactId>mybatis-generator-maven-plugin</artifactId>
+				<version>1.4.0</version>
 				<configuration>
 					<configurationFile>src/main/resources/generatorConfig.xml</configurationFile>
 				</configuration>
