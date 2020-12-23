@@ -19,7 +19,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
  * 封装返回数据
  * @author wangxiaodong
  */
-@ControllerAdvice(basePackages = "${groupId}")
+@ControllerAdvice(annotations = {RestController.class})
 public class ResponseWrapper implements ResponseBodyAdvice<Object> {
 
     private ObjectMapper objectMapper = new ObjectMapper();
