@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
+import java.util.Objects;
+
 /**
  * Created on 2019/3/12.
  * 封装返回数据
@@ -26,27 +28,18 @@ public class ResponseWrapper implements ResponseBodyAdvice<Object> {
 
     @Override
     public boolean supports(MethodParameter methodParameter, Class<? extends HttpMessageConverter<?>> aClass) {
-        return true;
+        return Objects.requireNonNull(returnType.getMethod()).getReturnType() != HttpResult.class;
     }
 
     @Override
     public Object beforeBodyWrite(Object o, MethodParameter methodParameter,
                                   MediaType mediaType, Class<? extends HttpMessageConverter<?>> aClass,
                                   ServerHttpRequest serverHttpRequest, ServerHttpResponse serverHttpResponse) {
-        //避免二次封装
-        if(o instanceof HttpResult){
+        OriginalResponse methodAnnotation = returnType.getMethodAnnotation(OriginalResponse.class);
+        if (methodAnnotation != null || returnType.getDeclaringClass().getAnnotation(OriginalResponse.class) != null) {
             return o;
-        }
-        if(o instanceof String){
-            try {
-                //这里如果直接返回String的话，会报错
-                serverHttpResponse.getHeaders().setContentType(MediaType.APPLICATION_JSON);
-                return objectMapper.writeValueAsString(HttpResult.success(o));
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
-                return null;
-            }
-        }
+        }GlobalCommonConfiguration
         return HttpResult.success(o);
+
     }
 }
