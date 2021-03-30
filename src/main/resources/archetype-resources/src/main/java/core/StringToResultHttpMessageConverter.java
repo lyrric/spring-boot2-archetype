@@ -4,12 +4,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.MediaType;
+import ${groupId}.model.HttpResult;
 import org.springframework.http.converter.AbstractHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.util.StreamUtils;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
@@ -20,7 +22,7 @@ import java.nio.charset.StandardCharsets;
  * 给前端正确的application/json响应头。
  * @author Administrator
  */
-public class StringToResultHttpMessageConverter extends AbstractHttpMessageConverter<Object> {
+public class StringToResultHttpMessageConverter extends AbstractHttpMessageConverter<HttpResult> {
     public static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
     private ObjectMapper mapper;
 
@@ -38,19 +40,18 @@ public class StringToResultHttpMessageConverter extends AbstractHttpMessageConve
     }
 
     @Override
-    protected String readInternal(Class<?> clazz, HttpInputMessage inputMessage) throws IOException, HttpMessageNotReadableException {
-        Charset charset = getContentTypeCharset(inputMessage.getHeaders().getContentType());
-        return StreamUtils.copyToString(inputMessage.getBody(), charset);
+    protected HttpResult readInternal(Class<? extends HttpResult> aClass, HttpInputMessage httpInputMessage) throws IOException, HttpMessageNotReadableException {
+        InputStream body = httpInputMessage.getBody();
+        byte[] bytes = new byte[body.available()];
+        body.read(bytes);
+        String str = new String(bytes);
+        return mapper.readValue(str, HttpResult.class);
     }
 
     @Override
-    protected void writeInternal(Object o, HttpOutputMessage outputMessage) throws IOException, HttpMessageNotWritableException {
-        Charset charset = getContentTypeCharset(outputMessage.getHeaders().getContentType());
-        if (o instanceof String) {
-            StreamUtils.copy((String) o, charset, outputMessage.getBody());
-        } else {
-            StreamUtils.copy(mapper.writeValueAsString(o), charset, outputMessage.getBody());
-        }
+    protected void writeInternal(HttpResult httpResult, HttpOutputMessage httpOutputMessage) throws IOException, HttpMessageNotWritableException {
+        Charset charset = getContentTypeCharset(httpOutputMessage.getHeaders().getContentType());
+        StreamUtils.copy(mapper.writeValueAsString(httpResult), charset, httpOutputMessage.getBody());
     }
 
     private Charset getContentTypeCharset(MediaType contentType) {

@@ -3,6 +3,7 @@ package ${groupId}.plugin;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ${groupId}.model.HttpResult;
+import ${groupId}.core.OriginalResponse;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.MediaType;
@@ -27,18 +28,18 @@ public class ResponseWrapper implements ResponseBodyAdvice<Object> {
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public boolean supports(MethodParameter methodParameter, Class<? extends HttpMessageConverter<?>> aClass) {
+    public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> aClass) {
         return Objects.requireNonNull(returnType.getMethod()).getReturnType() != HttpResult.class;
     }
 
     @Override
-    public Object beforeBodyWrite(Object o, MethodParameter methodParameter,
+    public Object beforeBodyWrite(Object o, MethodParameter returnType,
                                   MediaType mediaType, Class<? extends HttpMessageConverter<?>> aClass,
                                   ServerHttpRequest serverHttpRequest, ServerHttpResponse serverHttpResponse) {
         OriginalResponse methodAnnotation = returnType.getMethodAnnotation(OriginalResponse.class);
         if (methodAnnotation != null || returnType.getDeclaringClass().getAnnotation(OriginalResponse.class) != null) {
             return o;
-        }GlobalCommonConfiguration
+        }
         return HttpResult.success(o);
 
     }
