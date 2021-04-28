@@ -54,8 +54,6 @@
         <!-- 此日志文件只记录debug级别的 -->
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>debug</level>
-            <onMatch>ACCEPT</onMatch>
-            <onMismatch>DENY</onMismatch>
         </filter>
     </appender>
 
@@ -79,8 +77,6 @@
         <!-- 此日志文件只记录info级别的 -->
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>info</level>
-            <onMatch>ACCEPT</onMatch>
-            <onMismatch>DENY</onMismatch>
         </filter>
     </appender>
 
@@ -104,8 +100,6 @@
         <!-- 此日志文件只记录ERROR级别的 -->
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>error</level>
-            <onMatch>ACCEPT</onMatch>
-            <onMismatch>DENY</onMismatch>
         </filter>
     </appender>
 
